@@ -9,8 +9,7 @@ import plyer.platforms.win.notification
 from plyer import notification
 import os
 import pathlib
-from worldclass import localMinecraftWorld
-from worldclass import cloudMinecraftWorld
+from worldclass import localMinecraftWorld, cloudMinecraftWorld
 import math
 
 print('Getting credentials \n ')
@@ -53,7 +52,7 @@ def worldSync():
                     print(f'Updating {local_world.title} in cloud')
 
                     local_world.localToCloudSetup()
-                    local_world.uploadWorldZip(drive, cloud_world.id, id_parent_overhead)
+                    local_world.updateWorldZip(drive, cloud_world.id, id_parent_overhead)
 
                     minecraft_worlds_1 = drive.ListFile({'q': "'%s' in parents" % id_parent_overhead}).GetList()
                     world_modification_time = [i['modifiedDate'] for i in minecraft_worlds_1 if i['id'] == cloud_world.id][0][:-1].split('T')
@@ -84,6 +83,5 @@ def worldSync():
             cloud_world.downloadAndUnzipWorld()
 
             downloaded_world = localMinecraftWorld(cloud_world.name)
-            downloaded_world.cloudToLocalSetup(cloud_world.date, offset)
-
-worldSync()
+            downloaded_world.cloudToLocalSetup(cloud_world.date)
+        
