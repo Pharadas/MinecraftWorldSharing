@@ -69,7 +69,7 @@ def worldSync():
                 elif math.floor(cloud_world.unix_date) > math.floor(local_world.date):
                     print(f'Updating "{local_world.title}" in pc')
                     cloud_world.downloadAndUnzipWorld()
-                    local_world.cloudToLocalSetup(cloud_world.date, offset)
+                    local_world.cloudToLocalSetup(cloud_world.date)
                 
                 elif math.floor(cloud_world.unix_date) == math.floor(local_world.date):
                     print(f'{local_world.title} up to date')

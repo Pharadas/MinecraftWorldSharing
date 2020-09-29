@@ -191,14 +191,10 @@ class localMinecraftWorld:
         shutil.make_archive(self.script_path + '\\zipped-worlds\\' + self.name, 'zip', self.path)
 
         if self.verifyPlayerMetadata():
-            print('verified player metadata')
             if self.verifyPlayerExistance():
-                print('verified player existance')
                 self.moveLocalPlayerToExistingRemotePlayer()
-                print('moved local player to existing player')
             else:
                 self.moveLocalPlayerToNewRemotePlayer()
-                print('moved local player to new remote player')
 
     def cloudToLocalSetup(self, cloud_date):
         cloud_date = cloud_date.split('T')
@@ -225,7 +221,7 @@ class localMinecraftWorld:
         world = drive.CreateFile({'id': id, 'title': self.name + '.zip', 'parents': [{'id': parent_id}]})
         world.SetContentFile(self.script_path + '\\zipped-worlds\\' + self.name + '.zip')
         world.Upload()
-
+    
     def uploadWorldZip(self, drive, parent_id):
         world = drive.CreateFile({'title': self.name + '.zip', 'parents': [{'id': parent_id}], 'modifiedDate': 'T'.join(str(time.strftime(r'%Y-%m-%d %H:%M:%S', time.localtime(self.date + self.offset)) + 'Z').split(' '))})
         print(self.script_path + '\\zipped-worlds\\' + self.name + '.zip')

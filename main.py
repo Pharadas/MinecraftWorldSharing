@@ -7,8 +7,11 @@ import shutil
 import time
 import pathlib
 
-with open('Options.txt', 'r') as time:
-    delay_time = int(time.read().split(':')[-1])
+try:
+    with open('Options.txt', 'r') as options_file:
+        delay_time = int(time.read().split(':')[-1])
+except:
+    delay_time = 15
 
 setup()
 
