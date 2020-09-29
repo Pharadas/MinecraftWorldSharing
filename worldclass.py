@@ -254,5 +254,4 @@ class cloudMinecraftWorld:
         print('world extracted to ' + self.path + '\\' + self.name)
 
         time.sleep(2)
-
-print('thing')
+        
