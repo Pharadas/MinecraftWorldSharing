@@ -1,5 +1,3 @@
-print('Yeah, im runnin, what about it?')
-
 import os
 import ctypes
 import pywintypes
@@ -8,7 +6,7 @@ import winerror
 import subprocess
 import time
 import psutil
-from worldsync import worldSync
+from worldSync import worldSync
 import pathlib
 import shutil
 

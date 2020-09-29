@@ -1,11 +1,13 @@
-print('Opening Minecraft')
+print('Running initial sync')
 
-from worldsync import worldSync
-from minecraft_launcher import  setup
+from worldSync import worldSync
+from minecraftLauncher import  setup
 import psutil
 import shutil
 import time
 import pathlib
+
+notBeenOpened = True
 
 try:
     with open('Options.txt', 'r') as options_file:
@@ -14,6 +16,12 @@ except:
     delay_time = 15
 
 setup()
+
+while notBeenOpened:
+    if 'Minecraft.Windows.exe' in (p.name() for p in psutil.process_iter()):
+        notBeenOpened = False
+
+print('Opening Minecraft')
 
 while 'Minecraft.Windows.exe' in (p.name() for p in psutil.process_iter()):
     print('still running')
