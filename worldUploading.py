@@ -15,7 +15,7 @@ import time
 import shutil
 from pkg_resources import get_distribution
 from googleapiclient import discovery
-from worldclass import localMinecraftWorld
+from worldClass import localMinecraftWorld
 
 print('Getting credentials \n ')
 
