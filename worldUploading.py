@@ -32,14 +32,14 @@ playerMetadata_listbox = Listbox(worlds_upload, bg='black', height=20, width=50,
 
 print('Gathering folder...')
 
-minecraft_shared_worlds_folder = drive.ListFile({'q': "title = 'Minecraft shared worlds'"}).GetList()
+minecraft_shared_worlds_folder = drive.ListFile({'q': "title = 'Minecraft shared worlds' and trashed=false"}).GetList()
 try:
     id_parent_overhead = minecraft_shared_worlds_folder[0]['id']
 except:
     id_parent_overhead = minecraft_shared_worlds_folder['id']
 
 print('Getting worlds info...')
-minecraft_worlds = drive.ListFile({'q': "'%s' in parents" % id_parent_overhead}).GetList()
+minecraft_worlds = drive.ListFile({'q': "'%s' in parents and trashed=false" % id_parent_overhead}).GetList()
 cloud_worlds = [i['title'][:-4] for i in minecraft_worlds]
 
 def uploadWorld(cs):

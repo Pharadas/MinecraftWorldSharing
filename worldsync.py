@@ -21,7 +21,7 @@ gauth.LocalWebserverAuth()
 
 print('Gathering folder...')
 
-minecraft_shared_worlds_folder = drive.ListFile({'q': "title = 'Minecraft shared worlds'"}).GetList()
+minecraft_shared_worlds_folder = drive.ListFile({'q': "title = 'Minecraft shared worlds' and trashed=false"}).GetList()
 
 try:
     id_parent_overhead = minecraft_shared_worlds_folder[0]['id']
@@ -37,7 +37,7 @@ print('Getting worlds info...')
 worlds_path = r'C:\Users\{}\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\minecraftWorlds'.format(str(subprocess.check_output('whoami' , shell=True)).split('\\')[-3])
 
 def worldSync():
-    minecraft_worlds = drive.ListFile({'q': "'%s' in parents" % id_parent_overhead}).GetList()
+    minecraft_worlds = drive.ListFile({'q': "'%s' in parents and trashed=false" % id_parent_overhead}).GetList()
 
     for current_cloud_world in minecraft_worlds:
         cloud_world = cloudMinecraftWorld(current_cloud_world, id_parent_overhead, offset)
@@ -54,7 +54,7 @@ def worldSync():
                     local_world.localToCloudSetup()
                     local_world.updateWorldZip(drive, cloud_world.id, id_parent_overhead)
 
-                    minecraft_worlds_1 = drive.ListFile({'q': "'%s' in parents" % id_parent_overhead}).GetList()
+                    minecraft_worlds_1 = drive.ListFile({'q': "'%s' in parents and trashed=false" % id_parent_overhead}).GetList()
                     world_modification_time = [i['modifiedDate'] for i in minecraft_worlds_1 if i['id'] == cloud_world.id][0][:-1].split('T')
 
                     year_month_day = world_modification_time[0].split('-')

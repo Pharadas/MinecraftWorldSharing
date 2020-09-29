@@ -51,7 +51,7 @@ class localMinecraftWorld:
 
     def verifyPlayerMetadata(self):
         if os.path.isfile('myid.json'):
-            with open(self.script_path + r'\myid.json', 'r') as f:
+            with open('myid.json', 'r') as f:
                 try:
                     self.player_metadata = json.loads(f.read())
                 except:
@@ -60,7 +60,7 @@ class localMinecraftWorld:
                     else:
                         self.player_metadata = False
         elif listbox():
-            with open(self.script_path + r'\myid.json', 'r') as f:
+            with open('myid.json', 'r') as f:
                 self.player_metadata = json.loads(f.read())
         else:
             self.player_metadata = False
@@ -97,7 +97,7 @@ class localMinecraftWorld:
     def verifyPlayerExistance(self):
         world_keys_list = str(subprocess.check_output('mcpetool.exe db list --path "' + self.path + '"', shell=True)).split('\\n')
         
-        with open(self.script_path + r'\myid.json', 'r') as player_metadata:
+        with open('myid.json', 'r') as player_metadata:
             msaid_json = json.load(player_metadata)
             if len(msaid_json['nbt'][0]['value']) == 3:
                 my_msaid = 'player_' + str(msaid_json['nbt'][0]['value'][0]['value'])
@@ -125,7 +125,7 @@ class localMinecraftWorld:
         self.world_pos = [i['value'] for i in json.loads(subprocess.getoutput('mcpetool.exe leveldat get --path "' + self.path + '"'))['nbt'][0]['value'] if i['name'] == 'SpawnX' or i['name'] == 'SpawnY' or i['name'] == 'SpawnZ']
         self.world_gamemode = [i['value'] for i in json.loads(subprocess.getoutput('mcpetool.exe leveldat get --path "' + self.path + '"'))['nbt'][0]['value'] if i['name'] == 'GameType'][0]
 
-        with open(self.script_path + r'\\data_for_local_player.json', 'r') as localplayer_cache_read:
+        with open('data_for_local_player.json', 'r') as localplayer_cache_read:
             json_localplayer_cache = json.load(localplayer_cache_read)
 
             json_localplayer_cache['nbt'][0]['value'][[json_localplayer_cache['nbt'][0]['value'].index(i) for i in json_localplayer_cache['nbt'][0]['value'] if i['name'] == 'Pos'][0]]['value']['list'] = self.world_pos
@@ -133,7 +133,7 @@ class localMinecraftWorld:
 
             json_localplayer_cache = str(json_localplayer_cache).replace('None', 'null')
 
-        with open(self.script_path + r'\\data_for_local_player.json', 'w') as write_local_player_modified:
+        with open('data_for_local_player.json', 'w') as write_local_player_modified:
             write_local_player_modified.write(json_localplayer_cache.replace("'", '"'))
 
         subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i "' + self.script_path + r'\data_for_local_player.json" --json 7e6c6f63616c5f706c61796572')
@@ -190,7 +190,7 @@ class localMinecraftWorld:
         print('moved remote player to local player')
 
     def localToCloudSetup(self):
-        shutil.make_archive(self.script_path + '\\zipped-worlds\\' + self.name, 'zip', self.path)
+        shutil.make_archive('zipped-worlds\\' + self.name, 'zip', self.path)
 
         if self.verifyPlayerMetadata():
             print('player metadata exists')
@@ -225,13 +225,13 @@ class localMinecraftWorld:
 
     def updateWorldZip(self, drive, id, parent_id):
         world = drive.CreateFile({'id': id, 'title': self.name + '.zip', 'parents': [{'id': parent_id}]})
-        world.SetContentFile(self.script_path + '\\zipped-worlds\\' + self.name + '.zip')
+        world.SetContentFile('zipped-worlds\\' + self.name + '.zip')
         world.Upload()
     
     def uploadWorldZip(self, drive, parent_id):
         world = drive.CreateFile({'title': self.name + '.zip', 'parents': [{'id': parent_id}], 'modifiedDate': 'T'.join(str(time.strftime(r'%Y-%m-%d %H:%M:%S', time.localtime(self.date + self.offset)) + 'Z').split(' '))})
         print(self.script_path + '\\zipped-worlds\\' + self.name + '.zip')
-        world.SetContentFile(self.script_path + '\\zipped-worlds\\' + self.name + '.zip')
+        world.SetContentFile('zipped-worlds\\' + self.name + '.zip')
         world.Upload()
 
 class cloudMinecraftWorld:
@@ -260,3 +260,8 @@ class cloudMinecraftWorld:
 # 706c617965725f39646232646134352d363039392d336165382d626632312d636161636236363536666535
 # 706c617965725f64363639643138652d326637632d336435622d386337392d376239646136663238353337
 # 706c617965725f66306262346262322d373238352d333939382d613436342d306133643161366539366131
+
+# 706c617965725f7365727665725f6c677079376c616a2d726764312d68786a7a2d697977632d786e63773736326170666136
+
+# 706c617965725f7365727665725f63646432343538372d363435642d346538662d396230652d393665336330343534663937
+# 706c617965725f7365727665725f6c677079376c616a2d726764312d68786a7a2d697977632d786e63773736326170666136
