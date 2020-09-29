@@ -22,9 +22,9 @@ def listbox(): # shows player relevant information from saved worlds and lets hi
         global value
 
         if playerMetadata_listbox.get(ACTIVE) == '======No estoy en esta lista======':
-
-            top.destroy()
+            
             top.quit()
+            top.destroy()
             
             value = False
 
@@ -50,23 +50,25 @@ def listbox(): # shows player relevant information from saved worlds and lets hi
                     for i in worlds_dict[active_world][1]:
                         player_metadata = subprocess.check_output('mcpetool.exe db get --path "' + base_path + '\\' + active_world + '" ' + i + ' -json')
                         player_metadata_json = json.loads(player_metadata)
-                        
-                        print(player_metadata_json)
 
                         if player_metadata_json['nbt'][0]['value'][-1]['value'] == chosen_player:
                             player_metadata = player_metadata_json
                             player_metadata['nbt'][0]['value'][-1]['value'] = ""
+                            print('msaid:', player_metadata['nbt'][0]['value'][0]['value'], 'selfasignedid:', player_metadata['nbt'][0]['value'][1]['value']) if len(player_metadata['nbt'][0]['value']) == 3 else print('self asigned id:', player_metadata['nbt'][0]['value'][0]['value'])
                             with open(filepath + '\\myid.json', 'w') as myid:
                                 myid.write(str(player_metadata).replace("'", '"'))
 
                             print('saved metadata succesfully')
 
                             newtop.quit()
-                            newtop.destroy()
-                            
                             top.quit()
-                            top.destroy()
                             
+                            try:
+                                newtop.destroy()
+                                top.destroy()
+                            except:
+                                pass
+
 
             Lb2 = Listbox(newtop, bg='black', height=40, width=100, fg='white')
 
@@ -237,3 +239,5 @@ def listbox(): # shows player relevant information from saved worlds and lets hi
         return value
     else:
         return False
+
+listbox()
