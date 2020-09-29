@@ -7,7 +7,7 @@ import os
 import subprocess
 import pathlib
 import json
-from tkinter_test import listbox
+from idSelector import listbox
 import random
 from zipfile import ZipFile
 import zipfile
@@ -191,10 +191,14 @@ class localMinecraftWorld:
         shutil.make_archive(self.script_path + '\\zipped-worlds\\' + self.name, 'zip', self.path)
 
         if self.verifyPlayerMetadata():
+            print('player metadata exists')
             if self.verifyPlayerExistance():
+                print('player in world')
                 self.moveLocalPlayerToExistingRemotePlayer()
+                print('moved local player data to existing remote player data')
             else:
                 self.moveLocalPlayerToNewRemotePlayer()
+                print('moved local player data to new remote player data')
 
     def cloudToLocalSetup(self, cloud_date):
         cloud_date = cloud_date.split('T')

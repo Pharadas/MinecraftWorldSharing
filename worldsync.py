@@ -9,7 +9,7 @@ import plyer.platforms.win.notification
 from plyer import notification
 import os
 import pathlib
-from worldclass import localMinecraftWorld, cloudMinecraftWorld
+from worldClass import localMinecraftWorld, cloudMinecraftWorld
 import math
 
 print('Getting credentials \n ')
