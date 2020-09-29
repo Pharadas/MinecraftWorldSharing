@@ -51,7 +51,7 @@ class localMinecraftWorld:
 
     def verifyPlayerMetadata(self):
         if os.path.isfile(self.script_path + r'\myid.json'):
-            with open(self.script_path + r'\myid.json', 'r') as f:
+            with open(r'\myid.json', 'r') as f:
                 try:
                     self.player_metadata = json.loads(f.read())
                 except:
@@ -60,7 +60,7 @@ class localMinecraftWorld:
                     else:
                         self.player_metadata = False
         elif listbox():
-            with open(self.script_path + r'\myid.json', 'r') as f:
+            with open(r'\myid.json', 'r') as f:
                 self.player_metadata = json.loads(f.read())
         else:
             self.player_metadata = False
@@ -74,6 +74,8 @@ class localMinecraftWorld:
             self.full_id = False
             self.msaid = 'player_'
             self.selfasignedid = 'player_' + str(self.player_metadata['nbt'][0]['value'][0]['value'])
+
+        time.sleep(3)
 
         return self.player_metadata
 
@@ -95,7 +97,7 @@ class localMinecraftWorld:
     def verifyPlayerExistance(self):
         world_keys_list = str(subprocess.check_output('mcpetool.exe db list --path "' + self.path + '"', shell=True)).split('\\n')
         
-        with open(self.script_path + r'\myid.json', 'r') as player_metadata:
+        with open(r'\myid.json', 'r') as player_metadata:
             msaid_json = json.load(player_metadata)
             if len(msaid_json['nbt'][0]['value']) == 3:
                 my_msaid = 'player_' + str(msaid_json['nbt'][0]['value'][0]['value'])
@@ -123,7 +125,7 @@ class localMinecraftWorld:
         self.world_pos = [i['value'] for i in json.loads(subprocess.getoutput('mcpetool.exe leveldat get --path "' + self.path + '"'))['nbt'][0]['value'] if i['name'] == 'SpawnX' or i['name'] == 'SpawnY' or i['name'] == 'SpawnZ']
         self.world_gamemode = [i['value'] for i in json.loads(subprocess.getoutput('mcpetool.exe leveldat get --path "' + self.path + '"'))['nbt'][0]['value'] if i['name'] == 'GameType'][0]
 
-        with open(self.script_path + r'\\data_for_local_player.json', 'r') as localplayer_cache_read:
+        with open(r'\\data_for_local_player.json', 'r') as localplayer_cache_read:
             json_localplayer_cache = json.load(localplayer_cache_read)
 
             json_localplayer_cache['nbt'][0]['value'][[json_localplayer_cache['nbt'][0]['value'].index(i) for i in json_localplayer_cache['nbt'][0]['value'] if i['name'] == 'Pos'][0]]['value']['list'] = self.world_pos
@@ -131,7 +133,7 @@ class localMinecraftWorld:
 
             json_localplayer_cache = str(json_localplayer_cache).replace('None', 'null')
 
-        with open(self.script_path + r'\\data_for_local_player.json', 'w') as write_local_player_modified:
+        with open(r'\\data_for_local_player.json', 'w') as write_local_player_modified:
             write_local_player_modified.write(json_localplayer_cache.replace("'", '"'))
 
         subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i "' + self.script_path + r'\data_for_local_player.json" --json 7e6c6f63616c5f706c61796572')
@@ -139,10 +141,11 @@ class localMinecraftWorld:
         print('added new local player')
 
     def moveLocalPlayerToNewRemotePlayer(self):
-        with open(self.script_path + r'myid.json', 'w') as your_id:
+        with open('myid.json', 'w') as metadata:
             player_key = self.randomPlayerKey()
             self.player_metadata['nbt'][0]['value'][-1]['value'] = player_key
-            your_id.write(str(your_id).replace("'", '"'))
+            print(str(self.player_metadata).replace("'", '"'))
+            metadata.write(str(self.player_metadata).replace("'", '"'))
 
         subprocess.run('mcpetool.exe db get --path "' + self.path + '" --json 7e6c6f63616c5f706c61796572 > ' + self.script_path + '\\local_player.json', shell=True)
 
@@ -254,4 +257,11 @@ class cloudMinecraftWorld:
         print('world extracted to ' + self.path + '\\' + self.name)
 
         time.sleep(2)
-        
+
+this = localMinecraftWorld('ZqBzX2Z1AQA=')
+this.verifyPlayerMetadata()
+this.moveLocalPlayerToNewRemotePlayer()
+
+# 706c617965725f39646232646134352d363039392d336165382d626632312d636161636236363536666535
+# 706c617965725f64363639643138652d326637632d336435622d386337392d376239646136663238353337
+# 706c617965725f66306262346262322d373238352d333939382d613436342d306133643161366539366131
