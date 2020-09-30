@@ -90,9 +90,7 @@ class localMinecraftWorld:
         
         result = 'player_server_' + ''.join(key_part_1) + '-' + ''.join(key_part_2) + '-' + ''.join(key_part_3) + '-' + ''.join(key_part_4) + '-' + ''.join(key_part_5)
 
-        result_binary = result.encode()
-
-        return str(result_binary.hex())
+        return result
 
     def verifyPlayerExistance(self):
         world_keys_list = str(subprocess.check_output('mcpetool.exe db list --path "' + self.path + '"', shell=True)).split('\\n')
@@ -154,7 +152,7 @@ class localMinecraftWorld:
         else:
             subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\myid.json --json ' + self.selfasignedid.encode().hex(), shell=True)
 
-        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\local_player.json --json ' + player_key, shell=True)
+        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\local_player.json --json ' + player_key.encode().hex(), shell=True)
 
     def moveLocalPlayerToExistingRemotePlayer(self):
         subprocess.run('mcpetool.exe db get --path "' + self.path + '" --json ' + '7e6c6f63616c5f706c61796572' + ' > ' + self.script_path + '\\local_player.json', shell=True)
@@ -256,12 +254,3 @@ class cloudMinecraftWorld:
         print('world extracted to ' + self.path + '\\' + self.name)
 
         time.sleep(2)
-
-# 706c617965725f39646232646134352d363039392d336165382d626632312d636161636236363536666535
-# 706c617965725f64363639643138652d326637632d336435622d386337392d376239646136663238353337
-# 706c617965725f66306262346262322d373238352d333939382d613436342d306133643161366539366131
-
-# 706c617965725f7365727665725f6c677079376c616a2d726764312d68786a7a2d697977632d786e63773736326170666136
-
-# 706c617965725f7365727665725f63646432343538372d363435642d346538662d396230652d393665336330343534663937
-# 706c617965725f7365727665725f6c677079376c616a2d726764312d68786a7a2d697977632d786e63773736326170666136

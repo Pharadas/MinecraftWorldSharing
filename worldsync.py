@@ -84,4 +84,3 @@ def worldSync():
 
             downloaded_world = localMinecraftWorld(cloud_world.name)
             downloaded_world.cloudToLocalSetup(cloud_world.date)
-        
