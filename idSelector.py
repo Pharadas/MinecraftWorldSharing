@@ -54,8 +54,8 @@ def listbox(): # shows player relevant information from saved worlds and lets hi
                         player_metadata_json = json.loads(player_metadata)
 
                         if player_metadata_json['nbt'][0]['value'][-1]['value'] == chosen_player:
+                            print('passed')
                             player_metadata = player_metadata_json
-                            player_metadata['nbt'][0]['value'][-1]['value'] = ""
                             print('msaid:', player_metadata['nbt'][0]['value'][0]['value'], 'selfasignedid:', player_metadata['nbt'][0]['value'][1]['value']) if len(player_metadata['nbt'][0]['value']) == 3 else print('self asigned id:', player_metadata['nbt'][0]['value'][0]['value'])
                             with open(filepath + '\\myid.json', 'w') as myid:
                                 myid.write(str(player_metadata).replace("'", '"'))
@@ -241,3 +241,4 @@ def listbox(): # shows player relevant information from saved worlds and lets hi
         return value
     else:
         return False
+        

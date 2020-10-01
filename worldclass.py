@@ -50,16 +50,19 @@ class localMinecraftWorld:
             self.world_gamemode = [i['value'] for i in self.leveldat['nbt'][0]['value'] if i['name'] == 'GameType'][0]
 
     def verifyPlayerMetadata(self):
-        if os.path.isfile('myid.json'):
+        if os.path.isfile(self.script_path + 'myid.json'):
+            print('file exists')
             with open('myid.json', 'r') as f:
                 try:
                     self.player_metadata = json.loads(f.read())
                 except:
+                    print('didnt work')
                     if listbox():
                         self.player_metadata = json.loads(f.read())
                     else:
                         self.player_metadata = False
         elif listbox():
+            print('file doesnt exist')
             with open('myid.json', 'r') as f:
                 self.player_metadata = json.loads(f.read())
         else:
@@ -74,6 +77,8 @@ class localMinecraftWorld:
             self.full_id = False
             self.msaid = 'player_'
             self.selfasignedid = 'player_' + str(self.player_metadata['nbt'][0]['value'][0]['value'])
+        
+        self.player_key = str(self.player_metadata['nbt'][0]['value'][-1]['value'])
 
         time.sleep(3)
 
@@ -139,11 +144,7 @@ class localMinecraftWorld:
         print('added new local player')
 
     def moveLocalPlayerToNewRemotePlayer(self):
-        with open('myid.json', 'w') as metadata:
-            player_key = self.randomPlayerKey()
-            self.player_metadata['nbt'][0]['value'][-1]['value'] = player_key
-            print(str(self.player_metadata).replace("'", '"'))
-            metadata.write(str(self.player_metadata).replace("'", '"'))
+
         subprocess.run('mcpetool.exe db get --path "' + self.path + '" --json 7e6c6f63616c5f706c61796572 > ' + self.script_path + '\\local_player.json', shell=True)
 
         if self.full_id:
@@ -152,7 +153,10 @@ class localMinecraftWorld:
         else:
             subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\myid.json --json ' + self.selfasignedid.encode().hex(), shell=True)
 
-        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\local_player.json --json ' + player_key.encode().hex(), shell=True)
+        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\local_player.json --json ' + self.player_key.encode().hex(), shell=True)
+        print(self.player_key, self.player_key.encode().hex())
+
+        print(self.verifyPlayerExistance())
 
     def moveLocalPlayerToExistingRemotePlayer(self):
         subprocess.run('mcpetool.exe db get --path "' + self.path + '" --json ' + '7e6c6f63616c5f706c61796572' + ' > ' + self.script_path + '\\local_player.json', shell=True)
@@ -164,7 +168,7 @@ class localMinecraftWorld:
         
         playerdata_key = idsJson['nbt'][0]['value'][-1]['value']
 
-        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\local_player.json --json ' + playerdata_key.encode().hex(), shell=True)
+        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\local_player.json --json ' + self.player_key.encode().hex(), shell=True)
 
     def moveRemotePlayerToLocalPlayer(self):
         hex_metadata_key_msaid = self.msaid.encode().hex()
@@ -197,6 +201,7 @@ class localMinecraftWorld:
                 self.moveLocalPlayerToExistingRemotePlayer()
                 print('moved local player data to existing remote player data')
             else:
+                print('player not in world')
                 self.moveLocalPlayerToNewRemotePlayer()
                 print('moved local player data to new remote player data')
 
@@ -254,3 +259,16 @@ class cloudMinecraftWorld:
         print('world extracted to ' + self.path + '\\' + self.name)
 
         time.sleep(2)
+
+# 4175746f6e6f6d6f7573456e746974696573
+# 42696f6d6544617461
+# 4f766572776f726c64
+# 6d6f626576656e7473
+# 706c617965725f39646232646134352d363039392d336165382d626632312d636161636236363536666535
+# 706c617965725f64363639643138652d326637632d336435622d386337392d376239646136663238353337
+# 706c617965725f66306262346262322d373238352d333939382d613436342d306133643161366539366131
+# 706c617965725f7365727665725f31343037626330342d663530382d343466612d396238362d633631396433303465306438
+# 706c617965725f7365727665725f33623330623930612d306131352d346664392d626566632d613637316232623733663134
+# 7363686564756c65725754
+# 73636f7265626f617264
+# 7e6c6f63616c5f706c61796572

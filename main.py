@@ -15,6 +15,8 @@ try:
 except:
     delay_time = 15
 
+worldSync()
+
 setup()
 
 while notBeenOpened:
