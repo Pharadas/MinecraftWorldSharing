@@ -7,8 +7,6 @@ import shutil
 import time
 import pathlib
 
-notBeenOpened = True
-
 try:
 
     try:
@@ -21,9 +19,8 @@ try:
 
     setup()
 
-    while notBeenOpened:
-        if 'Minecraft.Windows.exe' in (p.name() for p in psutil.process_iter()):
-            notBeenOpened = False
+    while 'Minecraft.Windows.exe' not in (p.name() for p in psutil.process_iter()):
+        pass
 
     print('Opening Minecraft')
 
@@ -44,4 +41,4 @@ try:
         except:
             pass
 except:
-    input('cerrar?')
+    input('Enter to close ')

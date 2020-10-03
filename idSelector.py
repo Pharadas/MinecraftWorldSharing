@@ -243,4 +243,3 @@ def listbox(): # shows player relevant information from saved worlds and lets hi
         return value
     else:
         return False
-        
