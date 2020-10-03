@@ -25,10 +25,10 @@ def listbox(): # shows player relevant information from saved worlds and lets hi
 
         if playerMetadata_listbox.get(ACTIVE) == '======No estoy en esta lista======':
             
+            value = False
+
             top.quit()
             top.destroy()
-            
-            value = False
 
         elif playerMetadata_listbox.get(ACTIVE)[:14] == 'player_server_':
 
@@ -182,6 +182,7 @@ def listbox(): # shows player relevant information from saved worlds and lets hi
             Lb2.insert(END, '======================Click HERE if this is YOU======================')
 
             Lb2.bind("<Double-1>", choose_player)
+            Lb2.bind("<Return>", choose_player)
 
             Lb2.pack()
             newtop.mainloop()
@@ -233,6 +234,7 @@ def listbox(): # shows player relevant information from saved worlds and lets hi
     playerMetadata_listbox.insert(END, '======No estoy en esta lista======')
 
     playerMetadata_listbox.bind("<Double-1>", player_data)
+    playerMetadata_listbox.bind("<Return>", player_data)
 
     playerMetadata_listbox.pack()
     top.mainloop()

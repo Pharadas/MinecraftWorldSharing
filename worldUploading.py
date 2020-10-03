@@ -66,5 +66,6 @@ for local_world in os.listdir(base_path):
         playerMetadata_listbox.insert(END, worldName)
 
 playerMetadata_listbox.bind("<Double-1>", uploadWorld)
+playerMetadata_listbox.bind("<Return>", uploadWorld)
 playerMetadata_listbox.pack()
 worlds_upload.mainloop()

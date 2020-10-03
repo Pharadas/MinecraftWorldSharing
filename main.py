@@ -10,34 +10,38 @@ import pathlib
 notBeenOpened = True
 
 try:
-    with open('Options.txt', 'r') as options_file:
-        delay_time = int(time.read().split(':')[-1])
-except:
-    delay_time = 15
 
-worldSync()
-
-setup()
-
-while notBeenOpened:
-    if 'Minecraft.Windows.exe' in (p.name() for p in psutil.process_iter()):
-        notBeenOpened = False
-
-print('Opening Minecraft')
-
-while 'Minecraft.Windows.exe' in (p.name() for p in psutil.process_iter()):
-    print('still running')
-    worldSync()
-    print(' ')
-    time.sleep(delay_time)
-
-print('game closed, ending program')
-
-for i in range(5):
     try:
-        time.sleep(1)
-        shutil.rmtree(str(pathlib.Path().absolute()) + '\\zipped-worlds\\')
-        print('Cache ereased')
-        break
+        with open('Options.txt', 'r') as options_file:
+            delay_time = int(time.read().split(':')[-1])
     except:
-        pass
+        delay_time = 15
+
+    worldSync()
+
+    setup()
+
+    while notBeenOpened:
+        if 'Minecraft.Windows.exe' in (p.name() for p in psutil.process_iter()):
+            notBeenOpened = False
+
+    print('Opening Minecraft')
+
+    while 'Minecraft.Windows.exe' in (p.name() for p in psutil.process_iter()):
+        print('still running')
+        worldSync()
+        print(' ')
+        time.sleep(delay_time)
+
+    print('game closed, ending program')
+
+    for i in range(5):
+        try:
+            time.sleep(1)
+            shutil.rmtree(str(pathlib.Path().absolute()) + '\\zipped-worlds\\')
+            print('Cache ereased')
+            break
+        except:
+            pass
+except:
+    input('cerrar?')
