@@ -159,6 +159,7 @@ class localMinecraftWorld:
         print(self.verifyPlayerExistance())
 
     def moveLocalPlayerToExistingRemotePlayer(self):
+        print('gettin local player')
         subprocess.run('mcpetool.exe db get --path "' + self.path + '" --json ' + '7e6c6f63616c5f706c61796572' + ' > ' + self.script_path + '\\local_player.json', shell=True)
 
         if self.full_id:
@@ -185,8 +186,9 @@ class localMinecraftWorld:
             remote_player_metadata = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + hex_metadata_key_selfasignedid)
             player_data_key = json.loads(remote_player_metadata)['nbt'][0]['value'][-1]['value']
 
+        print(player_data_key, player_data_key.encode().hex())
         remote_player_data = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + player_data_key.encode().hex() + ' > ' + self.script_path + '\\remote_player.json')
-
+        print('works')
         subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\remote_player.json --json 7e6c6f63616c5f706c61796572', shell=True)
 
         print('moved remote player to local player')
