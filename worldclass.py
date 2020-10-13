@@ -39,6 +39,8 @@ class localMinecraftWorld:
         else:
             self.state = True
 
+            time.sleep(5)
+
             self.date = os.path.getmtime(self.path)
             self.player_in_world = False
 
@@ -50,9 +52,8 @@ class localMinecraftWorld:
             self.world_gamemode = [i['value'] for i in self.leveldat['nbt'][0]['value'] if i['name'] == 'GameType'][0]
 
     def verifyPlayerMetadata(self):
-        if os.path.isfile(self.script_path + 'myid.json'):
-            print('file exists')
-            with open('myid.json', 'r') as f:
+        if os.path.isfile('selfasignedid.json'):
+            with open('selfasignedid.json', 'r') as f:
                 try:
                     self.player_metadata = json.loads(f.read())
                 except:
@@ -63,23 +64,23 @@ class localMinecraftWorld:
                         self.player_metadata = False
         elif listbox():
             print('file doesnt exist')
-            with open('myid.json', 'r') as f:
+            with open('selfasignedid.json', 'r') as f:
                 self.player_metadata = json.loads(f.read())
         else:
             self.player_metadata = False
         
-        if self.player_metadata and len(self.player_metadata['nbt'][0]['value']) == 3:
+        if os.path.isfile('selfasignedid.json') and os.path.isfile('msaid.json'):
             self.full_id = True
             self.msaid = 'player_' + str(self.player_metadata['nbt'][0]['value'][0]['value'])
             self.selfasignedid = 'player_' + str(self.player_metadata['nbt'][0]['value'][1]['value'])
-
+            self.player_key = str(self.player_metadata['nbt'][0]['value'][-1]['value'])
+ 
         elif self.player_metadata:
             self.full_id = False
             self.msaid = 'player_'
             self.selfasignedid = 'player_' + str(self.player_metadata['nbt'][0]['value'][0]['value'])
-        
-        self.player_key = str(self.player_metadata['nbt'][0]['value'][-1]['value'])
-
+            self.player_key = str(self.player_metadata['nbt'][0]['value'][-1]['value'])
+ 
         time.sleep(3)
 
         return self.player_metadata
@@ -93,14 +94,14 @@ class localMinecraftWorld:
         key_part_4 = [possible_key[random.randrange(35)] for i in range(4)]
         key_part_5 = [possible_key[random.randrange(35)] for i in range(12)]
         
-        result = 'player_server_' + ''.join(key_part_1) + '-' + ''.join(key_part_2) + '-' + ''.join(key_part_3) + '-' + ''.join(key_part_4) + '-' + ''.join(key_part_5)
+        result = f'player_server_{"".join(key_part_1)}-{"".join(key_part_2)}-{"".join(key_part_3)}-{"".join(key_part_4)}-{"".join(key_part_5)}'
 
         return result
 
     def verifyPlayerExistance(self):
-        world_keys_list = str(subprocess.check_output('mcpetool.exe db list --path "' + self.path + '"', shell=True)).split('\\n')
+        world_keys_list = str(subprocess.check_output(f'mcpetool.exe db list --path "{self.path}"', shell=True)).split('\\n')
         
-        with open('myid.json', 'r') as player_metadata:
+        with open('selfasignedid.json', 'r') as player_metadata:
             msaid_json = json.load(player_metadata)
             if len(msaid_json['nbt'][0]['value']) == 3:
                 my_msaid = 'player_' + str(msaid_json['nbt'][0]['value'][0]['value'])
@@ -139,19 +140,18 @@ class localMinecraftWorld:
         with open('data_for_local_player.json', 'w') as write_local_player_modified:
             write_local_player_modified.write(json_localplayer_cache.replace("'", '"'))
 
-        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i "' + self.script_path + r'\data_for_local_player.json" --json 7e6c6f63616c5f706c61796572')
+        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i data_for_local_player.json --json 7e6c6f63616c5f706c61796572')
 
         print('added new local player')
 
-    def moveLocalPlayerToNewRemotePlayer(self):
-
+    def moveLocalPlayerToNewRemotePlayer(self): # Fix=== (u dum arse)
         subprocess.run('mcpetool.exe db get --path "' + self.path + '" --json 7e6c6f63616c5f706c61796572 > ' + self.script_path + '\\local_player.json', shell=True)
 
         if self.full_id:
-            subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\myid.json --json ' + self.msaid.encode().hex(), shell=True)
-            subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\myid.json --json ' + self.selfasignedid.encode().hex(), shell=True)
+            subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\msaid.json --json ' + self.msaid.encode().hex(), shell=True)
+            subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\selfasignedid.json --json ' + self.selfasignedid.encode().hex(), shell=True)
         else:
-            subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\myid.json --json ' + self.selfasignedid.encode().hex(), shell=True)
+            subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\msaid.json --json ' + self.selfasignedid.encode().hex(), shell=True)
 
         subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\local_player.json --json ' + self.player_key.encode().hex(), shell=True)
         print(self.player_key, self.player_key.encode().hex())
@@ -159,36 +159,46 @@ class localMinecraftWorld:
         print(self.verifyPlayerExistance())
 
     def moveLocalPlayerToExistingRemotePlayer(self):
-        subprocess.run('mcpetool.exe db get --path "' + self.path + '" --json ' + '7e6c6f63616c5f706c61796572' + ' > ' + self.script_path + '\\local_player.json', shell=True)
+        print('saving local player data')
+        subprocess.run(f'mcpetool.exe db get --path "{self.path}" --json 7e6c6f63616c5f706c61796572 > local_player.json', shell=True)
 
         if self.full_id:
-            idsJson = json.loads(subprocess.check_output('mcpetool.exe db get --path "' + self.path + '" --json ' + self.msaid.encode().hex(), shell=True))
+            print('getting msaid, normal:', self.msaid, 'hex:', self.msaid.encode().hex())
+            idsJson = json.loads(subprocess.check_output(f'mcpetool.exe db get --path "{self.path}" --json {self.msaid.encode().hex()}'))
         else:
-            idsJson = json.loads(subprocess.check_output('mcpetool.exe db get --path "' + self.path + '" --json ' + self.selfasignedid.encode().hex(), shell=True))
+            print('getting selfasignedid, normal:', self.selfasignedid, 'hex:', self.selfasignedid.encode().hex())
+            idsJson = json.loads(subprocess.check_output(f'mcpetool.exe db get --path "{self.path}" --json {self.selfasignedid.encode().hex()}'))
         
         playerdata_key = idsJson['nbt'][0]['value'][-1]['value']
 
-        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\local_player.json --json ' + self.player_key.encode().hex(), shell=True)
+        time.sleep(2)
+        print('getting player data, normal:', playerdata_key, 'hex:', playerdata_key.encode().hex())
+        subprocess.run(f'mcpetool.exe db put --path "{self.path}" -i local_player.json --json {playerdata_key.encode().hex()}')
 
-    def moveRemotePlayerToLocalPlayer(self):
+    def moveRemotePlayerToLocalPlayer(self): # fix===============
         hex_metadata_key_msaid = self.msaid.encode().hex()
         hex_metadata_key_selfasignedid = self.selfasignedid.encode().hex()
 
         print(hex_metadata_key_msaid, hex_metadata_key_selfasignedid)
+        print(self.path)
 
         if self.full_id:
             remote_player_metadata1 = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + hex_metadata_key_msaid)
             remote_player_metadata2 = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + hex_metadata_key_selfasignedid)
+            print(remote_player_metadata1)
+            print(remote_player_metadata2)
             player_data_key = json.loads(remote_player_metadata1)['nbt'][0]['value'][-1]['value'] if json.loads(remote_player_metadata1)['nbt'][0]['value'][-1]['value'] != '' else json.loads(remote_player_metadata2)['nbt'][0]['value'][-1]['value']
 
         else:
-            remote_player_metadata = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + hex_metadata_key_selfasignedid)
-            player_data_key = json.loads(remote_player_metadata)['nbt'][0]['value'][-1]['value']
+            remote_player_metadata2 = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + hex_metadata_key_selfasignedid)
+            player_data_key = json.loads(remote_player_metadata2)['nbt'][0]['value'][-1]['value']
 
-        remote_player_data = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + player_data_key.encode().hex() + ' > ' + self.script_path + '\\remote_player.json')
-
-        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\remote_player.json --json 7e6c6f63616c5f706c61796572', shell=True)
-
+        print(player_data_key, player_data_key.encode().hex())
+        print('done1')
+        remote_player_data = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + player_data_key.encode().hex() + ' > ' + self.script_path + r'\remote_player.json')
+        print('done2')
+        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i remote_player.json --json 7e6c6f63616c5f706c61796572', shell=True)
+        print('done 3, revelations')
         print('moved remote player to local player')
 
     def localToCloudSetup(self):
@@ -204,6 +214,8 @@ class localMinecraftWorld:
                 print('player not in world')
                 self.moveLocalPlayerToNewRemotePlayer()
                 print('moved local player data to new remote player data')
+        
+        notification.notify('Minecraft Shared Worlds', 'Updated "' + self.title + '" in cloud', timeout=5)
 
     def cloudToLocalSetup(self, cloud_date):
         cloud_date = cloud_date.split('T')
@@ -226,10 +238,13 @@ class localMinecraftWorld:
             self.addNewLocalPlayer()
             print('added new local player')
 
+        notification.notify('Minecraft Shared Worlds', 'Updated "' + self.title + '" in pc', timeout=5)
+
     def updateWorldZip(self, drive, id, parent_id):
         world = drive.CreateFile({'id': id, 'title': self.name + '.zip', 'parents': [{'id': parent_id}]})
         world.SetContentFile('zipped-worlds\\' + self.name + '.zip')
         world.Upload()
+        print('succesfully uploaded ' + self.title)
     
     def uploadWorldZip(self, drive, parent_id):
         world = drive.CreateFile({'title': self.name + '.zip', 'parents': [{'id': parent_id}], 'modifiedDate': 'T'.join(str(time.strftime(r'%Y-%m-%d %H:%M:%S', time.localtime(self.date + self.offset)) + 'Z').split(' '))})
@@ -259,16 +274,3 @@ class cloudMinecraftWorld:
         print('world extracted to ' + self.path + '\\' + self.name)
 
         time.sleep(2)
-
-# 4175746f6e6f6d6f7573456e746974696573
-# 42696f6d6544617461
-# 4f766572776f726c64
-# 6d6f626576656e7473
-# 706c617965725f39646232646134352d363039392d336165382d626632312d636161636236363536666535
-# 706c617965725f64363639643138652d326637632d336435622d386337392d376239646136663238353337
-# 706c617965725f66306262346262322d373238352d333939382d613436342d306133643161366539366131
-# 706c617965725f7365727665725f31343037626330342d663530382d343466612d396238362d633631396433303465306438
-# 706c617965725f7365727665725f33623330623930612d306131352d346664392d626566632d613637316232623733663134
-# 7363686564756c65725754
-# 73636f7265626f617264
-# 7e6c6f63616c5f706c61796572
