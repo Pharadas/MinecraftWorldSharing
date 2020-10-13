@@ -1,5 +1,3 @@
-print('Loading worlds for metadata selection')
-
 import subprocess
 import os
 import pathlib
@@ -12,6 +10,7 @@ import time
 value = True
 
 def listbox(): # shows player relevant information from saved worlds and lets him choose his character, this saves his metadata for later use
+    print('Loading worlds for metadata selection')
 
     user = str(subprocess.check_output('whoami' , shell=True)).split('\\')[-3]
     base_path = r'C:\Users\{}\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\minecraftWorlds'.format(user)
@@ -54,22 +53,27 @@ def listbox(): # shows player relevant information from saved worlds and lets hi
                         player_metadata_json = json.loads(player_metadata)
 
                         if player_metadata_json['nbt'][0]['value'][-1]['value'] == chosen_player:
-                            print('passed')
                             player_metadata = player_metadata_json
-                            print('msaid:', player_metadata['nbt'][0]['value'][0]['value'], 'selfasignedid:', player_metadata['nbt'][0]['value'][1]['value']) if len(player_metadata['nbt'][0]['value']) == 3 else print('self asigned id:', player_metadata['nbt'][0]['value'][0]['value'])
-                            with open(filepath + '\\myid.json', 'w') as myid:
-                                myid.write(str(player_metadata).replace("'", '"'))
-
-                            print('saved metadata succesfully')
-
-                            newtop.quit()
-                            top.quit()
                             
-                            try:
-                                newtop.destroy()
-                                top.destroy()
-                            except:
-                                pass
+                            if len(player_metadata_json['nbt'][0]['value']) == 3:
+                                if player_metadata_json['nbt'][0]['value'][0]['value'].encode().hex() == i[14:]:
+
+                                    with open('msaid.json', 'w') as myid:
+                                        myid.write(str(player_metadata).replace("'", '"'))
+                                else:
+                                    with open('selfasignedid.json', 'w') as myid:
+                                        myid.write(str(player_metadata).replace("'", '"'))
+                            else:
+                                with open('selfasignedid.json', 'w') as myid:
+                                    myid.write(str(player_metadata).replace("'", '"'))
+
+                    print('saved metadata succesfully')
+
+                    try:
+                        newtop.destroy()
+                        top.destroy()
+                    except:
+                        pass
 
 
             Lb2 = Listbox(newtop, bg='black', height=40, width=100, fg='white')
