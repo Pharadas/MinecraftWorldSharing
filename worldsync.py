@@ -34,7 +34,7 @@ offset = (datetime.now(tzutc()).replace(tzinfo=None) - datetime.now()).total_sec
 
 print('Getting worlds info...')
 
-worlds_path = r'C:\Users\{}\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\minecraftWorlds'.format(str(subprocess.check_output('whoami' )).split('\\')[-3])
+worlds_path = r'C:\Users\{}\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\minecraftWorlds'.format(str(subprocess.check_output('whoami' , shell=True)).split('\\')[-3])
 
 def worldSync():
     minecraft_worlds = drive.ListFile({'q': "'%s' in parents and trashed=false" % id_parent_overhead}).GetList()

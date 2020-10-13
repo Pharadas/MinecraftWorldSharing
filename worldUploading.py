@@ -25,7 +25,7 @@ try:
     drive = GoogleDrive(gauth)
     gauth.LocalWebserverAuth()
 
-    user = str(subprocess.check_output('whoami' )).split('\\')[-3]
+    user = str(subprocess.check_output('whoami' , shell=True)).split('\\')[-3]
     base_path = r'C:\Users\{}\AppData\Local\Packages\Microsoft.MinecraftUWP_8wekyb3d8bbwe\LocalState\games\com.mojang\minecraftWorlds'.format(user)
 
     worlds_upload = Tk()
