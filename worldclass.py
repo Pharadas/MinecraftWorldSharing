@@ -159,8 +159,13 @@ class localMinecraftWorld:
         print(self.verifyPlayerExistance())
 
     def moveLocalPlayerToExistingRemotePlayer(self):
+<<<<<<< HEAD
         print('saving local player data')
         subprocess.run(f'mcpetool.exe db get --path "{self.path}" --json 7e6c6f63616c5f706c61796572 > local_player.json', shell=True)
+=======
+        print('gettin local player')
+        subprocess.run('mcpetool.exe db get --path "' + self.path + '" --json ' + '7e6c6f63616c5f706c61796572' + ' > ' + self.script_path + '\\local_player.json', shell=True)
+>>>>>>> 0247a299da3bf133256eceed1fcbb65cca1171bf
 
         if self.full_id:
             print('getting msaid, normal:', self.msaid, 'hex:', self.msaid.encode().hex())
@@ -190,6 +195,7 @@ class localMinecraftWorld:
             player_data_key = json.loads(remote_player_metadata1)['nbt'][0]['value'][-1]['value'] if json.loads(remote_player_metadata1)['nbt'][0]['value'][-1]['value'] != '' else json.loads(remote_player_metadata2)['nbt'][0]['value'][-1]['value']
 
         else:
+<<<<<<< HEAD
             remote_player_metadata2 = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + hex_metadata_key_selfasignedid)
             player_data_key = json.loads(remote_player_metadata2)['nbt'][0]['value'][-1]['value']
 
@@ -199,6 +205,16 @@ class localMinecraftWorld:
         print('done2')
         subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i remote_player.json --json 7e6c6f63616c5f706c61796572', shell=True)
         print('done 3, revelations')
+=======
+            remote_player_metadata = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + hex_metadata_key_selfasignedid)
+            player_data_key = json.loads(remote_player_metadata)['nbt'][0]['value'][-1]['value']
+
+        print(player_data_key, player_data_key.encode().hex())
+        remote_player_data = subprocess.getoutput('mcpetool.exe db get --path "' + self.path + '" --json ' + player_data_key.encode().hex() + ' > ' + self.script_path + '\\remote_player.json')
+        print('works')
+        subprocess.run('mcpetool.exe db put --path "' + self.path + '" -i ' + self.script_path + '\\remote_player.json --json 7e6c6f63616c5f706c61796572', shell=True)
+
+>>>>>>> 0247a299da3bf133256eceed1fcbb65cca1171bf
         print('moved remote player to local player')
 
     def localToCloudSetup(self):
