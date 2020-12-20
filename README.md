@@ -1,6 +1,4 @@
 # MinecraftWorldSharing
-Tool for decentralizing bedrock minecraft worlds
-
 This tool tries to allow players to share worlds with other people through Google Drive,
 it modifies the world in such a way that it remembers player's data and changes the worlds
 accordingly.
