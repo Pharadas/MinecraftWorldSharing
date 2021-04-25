@@ -13,7 +13,7 @@ The second executable is the 'World Uploading' script, which modifies a chosen w
 saved metadata (if there's none, it will prompt 'Id Selector')) and saves it to any folder named 
 'Minecraft Shared Worlds' in the player's Google Drive. The modification required is as follows:
 
-- If the player has ever joined remotely to that world, it will save the local player's data
+- If the player has joined remotely to that world, it will save the local player's data
   to that id, and replace the local player with the default information for a new player
   (Considering the world's gamemode, spawnpoint, etc...)
 
